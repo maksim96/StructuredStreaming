@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by Maximilian on 03.10.2017.
+ * Created by Maximilian Thiessen on 03.10.2017.
  * Gely algorithm to list all closed Itemsets of a strongly accessible and confluent set system.
  * This is just the basic class without frequency constraints.
  * One can implement their own derived classes of this
@@ -19,10 +19,11 @@ public abstract class Gely {
     protected Set<Integer> E;
     protected ArrayList<Transaction> D;
 
-    public ArrayList<Itemset> closedItemsets;
+    protected ArrayList<Itemset> closedItemsets;
 
     private final static int NOT_FOUND_AUGMENTATION = -1;
 
+    //abstract to methods, to be implemented by concrete gelyClasses like ConnectedGely or ClosedFrequentGely
     public abstract boolean inF(Set itemset, int newItem);
     public abstract boolean inF(Set itemset);
 
@@ -37,6 +38,9 @@ public abstract class Gely {
     public Gely(ArrayList<Transaction> d, Set<Integer> e) {
         D = d;
         E = e;
+    }
+
+    public Gely() {
     }
 
     /**
@@ -55,6 +59,8 @@ public abstract class Gely {
         }
         return NOT_FOUND_AUGMENTATION;
     }
+
+
 
     /**
      * Starts the gely algorithm. Finds and returns all closed itemsets in (E, F) regarding to D.
@@ -126,6 +132,30 @@ public abstract class Gely {
         B.clear();
         //reset B
         B.addAll(BTemp);
+    }
+
+    public Set<Integer> getE() {
+        return E;
+    }
+
+    public void setE(Set<Integer> e) {
+        E = e;
+    }
+
+    public ArrayList<Transaction> getD() {
+        return D;
+    }
+
+    public void setD(ArrayList<Transaction> d) {
+        D = d;
+    }
+
+    public ArrayList<Itemset> getClosedItemsets() {
+        return closedItemsets;
+    }
+
+    public void setClosedItemsets(ArrayList<Itemset> closedItemsets) {
+        this.closedItemsets = closedItemsets;
     }
 
 }

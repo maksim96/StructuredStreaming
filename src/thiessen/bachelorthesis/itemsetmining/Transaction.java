@@ -4,13 +4,13 @@ import java.util.Collection;
 import java.util.HashSet;
 
 /**
- * Created by Maximilian on 13.10.2017.
+ * Created by Maximilian Thiessen on 13.10.2017.
  * Represents a transaction in the database/sliding window.
  * Is basically just a HashSet with an id.
  * The id is mainly used to group the decomposed maximal X_i's
  */
 public class Transaction extends HashSet<Integer> {
-    //Global counter for all the transactions
+    //Global counter for all the transactions, so all the transaction have got different ids
     public static long idCounter = 1;
 
     private long id;

@@ -6,7 +6,10 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by Maximilian on 06.10.2017.
+ * Created by Maximilian Thiessen on 06.10.2017.
+ * Represents a simple graph class. Has some useful routines for augmenting graphs or checking connectivity.
+ * Additionally there is a method to get a random walk on the graph.
+ * This is used to generate the transactions for the road network experiment.
  */
 public class Graph extends ArrayList<ArrayList<Integer>> {
 
@@ -56,7 +59,7 @@ public class Graph extends ArrayList<ArrayList<Integer>> {
             constraint[item] = true;
         }
 
-        DFSConstrained(x, connectedComponent, marked, constraint);
+        DFSConstrained(x, connectedComponent, marked, constraint, itemset);
 
         return connectedComponent;
 
@@ -73,12 +76,15 @@ public class Graph extends ArrayList<ArrayList<Integer>> {
         }
     }
 
-    private void DFSConstrained(int x, Set<Integer> connectedComponent, boolean[] marked, boolean[] constraint) {
+    private void DFSConstrained(int x, Set<Integer> connectedComponent, boolean[] marked, boolean[] constraint, Set<Integer> itemset) {
         for (int neighbour : this.get(x)) {
             if (!marked[neighbour] && constraint[neighbour]) {
                 connectedComponent.add(neighbour);
+                if (connectedComponent.size() == itemset.size()) {
+                    return;
+                }
                 marked[neighbour] = true;
-                DFSConstrained(neighbour, connectedComponent, marked, constraint);
+                DFSConstrained(neighbour, connectedComponent, marked, constraint, itemset);
             }
 
         }
@@ -109,6 +115,13 @@ public class Graph extends ArrayList<ArrayList<Integer>> {
         return false;
     }
 
+    /**
+     * Tries to produces a path with starting node "start" and length "length".
+     * If it runs into a deadlock or there is no more new nodes to visit it just stops.
+     * @param start start node
+     * @param length upper bound for the length of the path
+     * @return
+     */
     public Set<Integer> randomWalk(int start, int length) {
         Set<Integer> walk = new HashSet<>(length);
 
@@ -119,7 +132,6 @@ public class Graph extends ArrayList<ArrayList<Integer>> {
         for (int i = 0; i < length; i++) {
             int neighbourCount = this.get(start).size();
             if (neighbourCount == 1 && walk.contains(this.get(start).get(0))) {
-                System.err.println("Sackgasse!");
                 return walk;
             }
             int randomNeighbour;

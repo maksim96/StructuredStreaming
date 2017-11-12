@@ -9,17 +9,13 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Created by Maximilian on 06.10.2017.
+ * Created by Maximilian Thiessen on 06.10.2017.
+ * Concrete implementation of gely for the connected graphs with unique labels scenario.
  */
 public class ConnectedGely extends FrequentGely {
 
     //Adjazenzliste des unterliegenden Graphen
     Graph graph = new Graph();
-
-
-
-    private Itemset toRemoveSupportSet = new Itemset();
-    private Itemset currentSupportSet = new Itemset();
 
     @Override
     public boolean inF(Set itemset, int newItem) {
@@ -118,6 +114,7 @@ public class ConnectedGely extends FrequentGely {
 
 
         boolean done = false;
+        //is extremely inefficient
         while(!done){
             done = true;
             int toRemove = 0;
@@ -147,6 +144,14 @@ public class ConnectedGely extends FrequentGely {
         super(d, e);
         this.graph = graph;
         this.minSupport = minSupport;
+    }
+
+    public Graph getGraph() {
+        return graph;
+    }
+
+    public void setGraph(Graph graph) {
+        this.graph = graph;
     }
 }
 

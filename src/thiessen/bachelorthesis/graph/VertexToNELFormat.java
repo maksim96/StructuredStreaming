@@ -8,7 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Created by Maximilian on 14.10.2017.
+ * Created by Maximilian Thiessen on 14.10.2017.
  * formats a path (-graph) file from simple one path = one line, one number = one vertex id
  * e.g.
  * 445231 438242

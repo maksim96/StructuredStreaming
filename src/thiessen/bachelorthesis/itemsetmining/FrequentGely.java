@@ -5,7 +5,7 @@ import com.sun.xml.internal.bind.annotation.OverrideAnnotationOf;
 import java.util.*;
 
 /**
- * Created by Maximilian on 08.10.2017.
+ * Created by Maximilian Thiessen on 08.10.2017.
  * Adds a frequency constraint to Gely algorithm.
  * One can not put the frequency constraint on F, because it is not guaranteed that it stays confluent.
  * And we need the confluence of F for the decomposition
@@ -14,6 +14,7 @@ import java.util.*;
 public abstract class FrequentGely extends Gely {
 
     protected int minSupport = 0;
+
 
     public FrequentGely(ArrayList<Transaction> d, Set<Integer> e) {
         super(d, e);
@@ -24,6 +25,7 @@ public abstract class FrequentGely extends Gely {
         this.minSupport = minSupport;
     }
 
+    //just check if the itemset is frequent
     public boolean isFrequent(Itemset itemset) {
         int supportCount = 0;
         for (Set transaction : D) {
@@ -38,6 +40,8 @@ public abstract class FrequentGely extends Gely {
         return supportCount >= minSupport;
     }
 
+    //check if itemset is frequent, and if calcSupport is true, also calc its support
+    //is often slower than just checking if is frequent
     public boolean isFrequent(Itemset itemset, boolean calcSupport) {
         if (!calcSupport) {
             return isFrequent(itemset);
@@ -53,6 +57,10 @@ public abstract class FrequentGely extends Gely {
         }
     }
 
+    //check if the new Itemset (itemset, newItem) is frequent
+    //use the support set of itemset
+    //so you just have to check, how many transaction of the support set of itemset contain newItem
+    //is much smaller than usual isFrequent check, because you don't have to look on the complete transaction database
     public boolean isFrequent(Itemset itemset, int newItem, Set<Integer> currentSupportSet) {
         int supportCount = 0;
         for (int j : currentSupportSet) {
@@ -68,21 +76,7 @@ public abstract class FrequentGely extends Gely {
         return supportCount >= minSupport;
     }
 
-    public boolean isFrequent(Itemset itemset, ArrayList<Integer> currentSupportSet) {
-        int supportCount = 0;
-        for (int j : currentSupportSet) {
-            Set transaction = D.get(j);
-            if (transaction.containsAll(itemset)) {
-                supportCount++;
-                if (supportCount >= minSupport) {
-                    return true;
-                }
-            }
-
-        }
-        return false;
-    }
-
+    //check the frequency of a single item
     public boolean isFrequent(int item) {
         int supportCount = 0;
         for (Set transaction : D) {
@@ -97,6 +91,8 @@ public abstract class FrequentGely extends Gely {
         return false;
     }
 
+    //remove all infrequent items of E
+    //is usefull when E is big, but only a small part of it actually frequent
     private void removeInfrequentItems(Set<Integer> E) {
         //good idea maybe: merke dir für alle items die transaktionen, die dieses item enthalten
         //könnte sein, dass das ziemlich den support berechnungsprozess beschleunigen könnte
@@ -123,6 +119,7 @@ public abstract class FrequentGely extends Gely {
         E.retainAll(frequentItems);
     }
 
+    //first prune E, than do usual gely
     @Override
     public ArrayList<Itemset> gely() {
         closedItemsets = new ArrayList<>(D.size()); //init with no. transactions
@@ -138,6 +135,7 @@ public abstract class FrequentGely extends Gely {
         return closedItemsets;
     }
 
+    //no pruning of E. usefull in the sliding window case, where you do not have to calculate the prune E all over again
     public ArrayList<Itemset> gely(boolean notPrune) {
         if (!notPrune) {
             return gely();
@@ -149,6 +147,7 @@ public abstract class FrequentGely extends Gely {
         return closedItemsets;
     }
 
+    //adds a frequency check to gely
     @Override
     protected void list(Itemset C, Set<Integer> B, Set<Integer> parentSupportSet) {
         Set<Integer> currentSupportSet = new HashSet<>();
@@ -201,5 +200,13 @@ public abstract class FrequentGely extends Gely {
 
         B.clear();
         B.addAll(BTemp);
+    }
+
+    public int getMinSupport() {
+        return minSupport;
+    }
+
+    public void setMinSupport(int minSupport) {
+        this.minSupport = minSupport;
     }
 }

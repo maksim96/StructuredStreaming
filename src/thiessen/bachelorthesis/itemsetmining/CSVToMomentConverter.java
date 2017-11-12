@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 /**
- * Created by Maximilian on 05.10.2017.
+ * Created by Maximilian Thiessen on 05.10.2017.
  */
 public class CSVToMomentConverter {
 

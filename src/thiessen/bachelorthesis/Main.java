@@ -1,11 +1,9 @@
 package thiessen.bachelorthesis;
 
 import com.Ostermiller.util.CSVParser;
-import thiessen.bachelorthesis.closedstreaming.GelyCFI;
-import thiessen.bachelorthesis.closedstreaming.GelyCFIConnected;
-import thiessen.bachelorthesis.closedstreaming.GelyCFIOptimized;
+import thiessen.bachelorthesis.closedstreaming.StreamGely;
+import thiessen.bachelorthesis.closedstreaming.StreamGelyConnected;
 import thiessen.bachelorthesis.graph.Graph;
-import thiessen.bachelorthesis.graph.VertexToNELFormat;
 import thiessen.bachelorthesis.itemsetmining.*;
 
 import java.io.*;
@@ -17,28 +15,26 @@ public class Main {
     public static void main(String[] args) {
 	// write your code here
 
-        int[] supports = {100, 50, 25, 10, 5, 2, 1};
+        int[] supports = {500, 400, 300, 200, 100, 50, 25, 10};
 
         for (int s: supports) {
-           slidingWindowTest(s);
-           //compareStreamGelyWithDanielsOptimization(s);
+           //slidingWindowTest(s);
 
             //testStreamGelyWithoutFrequencyConstraint(s);
         }
-
-       //    graphGelyTest();
+        //    graphGelyTest();
      graphGelyRoadNetworkTest();
 
-      //  graphGelSmallTest();
+      //graphGelSmallTest();
 
-       // VertexToNELFormat.format("trafficjams.txt", "trafficjamsConverted.txt", "x" );
+       // VertexToNELFormat.format("data/trafficjams.txt", "data/trafficjamsConverted.txt", "x" );
 
     }
 
     private static void graphGelyRoadNetworkTest() {
         String[][] data = new String[0][];
         try {
-            CSVParser csvParser = new CSVParser(new FileReader("roadNet-CA.txt"), '\t');
+            CSVParser csvParser = new CSVParser(new FileReader("data/roadNet-CA.txt"), '\t');
             csvParser.setCommentStart("#");
             data = csvParser.getAllValues();
             Set<Integer> E = new HashSet<>(1965206);
@@ -60,7 +56,7 @@ public class Main {
 
             System.out.println("Parsing graph done!");
 /*
-            FileWriter trafficJams = new FileWriter("trafficjams.txt");
+            FileWriter trafficJams = new FileWriter("data/trafficjams.txt");
 
             for (int i = 0; i < 100000; i++) {
                 Random random = new Random();
@@ -96,7 +92,7 @@ public class Main {
 
             System.out.println("==============================================");
 
-            GelyCFIConnected stream = new GelyCFIConnected(getSubD(D, 0, 2), E, g, 1);
+            StreamGelyConnected stream = new StreamGelyConnected(getSubD(D, 0, 2), E, g, 1);
             stream.explore();
 
             System.out.println(stream.closedItemsets);
@@ -109,7 +105,7 @@ public class Main {
 
             */
 
-            data = CSVParser.parse(new FileReader("trafficjams.txt"), ' ');
+            data = CSVParser.parse(new FileReader("data/trafficjams.txt"), ' ');
 
             for (int i = 0; i < 1000000; i++) {
                 D.add(new Transaction());
@@ -132,14 +128,14 @@ public class Main {
 
                 ArrayList<Transaction> subD = getSubD(D, 0, startInterval);
                 ArrayList<Transaction> D2 = new ArrayList<>(D);
-                GelyCFIConnected stream = new GelyCFIConnected(getSubD(D2, 0, startInterval), new HashSet<>(E), g, minSupport);
+                StreamGelyConnected stream = new StreamGelyConnected(getSubD(D2, 0, startInterval), new HashSet<>(E), g, minSupport);
                 long millisecGCFI = System.currentTimeMillis();
                 stream.explore();
                 millisecGCFI = System.currentTimeMillis() - millisecGCFI;
                 Gely gely = new ConnectedGely(subD, new HashSet<>(E), g, minSupport);
                 gely.gely();
                 System.out.println("explored first 50000 in " + millisecGCFI + "ms. StreamGely Found: "
-                        + stream.closedItemsets.size() + " Gely found: " + gely.closedItemsets.size());
+                        + stream.getClosedItemsets().size() + " Gely found: " + gely.getClosedItemsets().size());
                 long millisecgely = 0;
                 long totalMillisec = 0;
                 for (int i = 0; i < 100000; i++) {
@@ -177,7 +173,7 @@ public class Main {
     private static void graphGelSmallTest() {
         String[][] data = new String[0][];
         try {
-            CSVParser csvParser = new CSVParser(new FileReader("smallGraphs.txt"), ' ');
+            CSVParser csvParser = new CSVParser(new FileReader("data/smallGraphs.txt"), ' ');
             csvParser.setCommentStart("#");
             data = csvParser.getAllValues();
             Set<Integer> E = new HashSet<>(23);
@@ -199,7 +195,7 @@ public class Main {
 
             System.out.println("Parsing graph done!");
 
-            FileWriter trafficJams = new FileWriter("trafficjamsSmall.txt");
+            FileWriter trafficJams = new FileWriter("data/trafficjamsSmall.txt");
 
             Itemset test =new Itemset();
             test.add(5);
@@ -226,7 +222,7 @@ public class Main {
             }
             trafficJams.close();
 
-            data = CSVParser.parse(new FileReader("trafficjamsSmall.txt"), ' ');
+            data = CSVParser.parse(new FileReader("data/trafficjamsSmall.txt"), ' ');
 
             for (int i = 0; i < 1000; i++) {
                 D.add(new Transaction());
@@ -240,7 +236,7 @@ public class Main {
                 }
             }
 
-            GelyCFIConnected stream = new GelyCFIConnected(getSubD(D, 0, 20), E, g, 2);
+            StreamGelyConnected stream = new StreamGelyConnected(getSubD(D, 0, 20), E, g, 2);
             stream.explore();
 
             ArrayList<Transaction> D2 = new ArrayList<>(D);
@@ -250,8 +246,8 @@ public class Main {
                 Gely gely = new ConnectedGely(getSubD(D2,i+1,i+21), E, g, 2);
                 gely.gely();
 
-                System.out.println("(" + stream.closedItemsets.size() + " | " +  gely.closedItemsets.size() + ")");
-                if (stream.closedItemsets.size() !=  gely.closedItemsets.size()) {
+                System.out.println("(" + stream.getClosedItemsets().size() + " | " +  gely.getClosedItemsets().size() + ")");
+                if (stream.getClosedItemsets().size() !=  gely.getClosedItemsets().size()) {
                     System.out.println("ahhhh");
                 }
             }
@@ -267,7 +263,7 @@ public class Main {
     private static void graphGelyTest() {
         String[][] data = new String[0][];
         try {
-            data = CSVParser.parse(new FileReader("small.txt"), ' ');
+            data = CSVParser.parse(new FileReader("data/small.txt"), ' ');
             Set<Integer> E = new HashSet<>();
             ArrayList<Transaction> D = new ArrayList<>(data.length);
 
@@ -302,19 +298,19 @@ public class Main {
                 //System.out.println((i+1) + ". " + gely.closedItemsets +  " || " + getSubD(D,i,i+2));
                 gely = new ConnectedGely(getSubD(D,i,i+2), E, g, 1);
                 gely.gely();
-                System.out.println(gely.closedItemsets);
+                System.out.println(gely.getClosedItemsets());
             }
 
             System.out.println("==============================================");
 
-            GelyCFIConnected stream = new GelyCFIConnected(getSubD(D, 0, 2), E, g, 1);
+            StreamGelyConnected stream = new StreamGelyConnected(getSubD(D, 0, 2), E, g, 1);
             stream.explore();
 
-            System.out.println(stream.closedItemsets);
+            System.out.println(stream.getClosedItemsets());
 
             for (int i = 0; i < 9 ; i++) {
                 stream.slidingWindowStep(D.get(i+3));
-                System.out.println(stream.closedItemsets);
+                System.out.println(stream.getClosedItemsets());
             }
 
 
@@ -328,7 +324,7 @@ public class Main {
     private static void testStreamGelyWithoutFrequencyConstraint(int support) {
         String[][] data = new String[0][];
         try {
-            data = CSVParser.parse(new FileReader("mushrooms.txt"), ' ');
+            data = CSVParser.parse(new FileReader("data/mushrooms.txt"), ' ');
             Set<Integer> E = new HashSet<>();
             ArrayList<Transaction> D = new ArrayList<>(data.length);
 
@@ -354,7 +350,7 @@ public class Main {
 
             Set<Integer> fullE = new HashSet<>(E);
 
-            GelyCFI gcfi = new GelyCFI(subD, E, support*250/500);
+            StreamGely gcfi = new StreamGely(subD, E, new ClosedFrequentGely(subD, E, support*250/500), support*250/500);
 
             gcfi.explore();
 
@@ -369,7 +365,7 @@ public class Main {
                 gcfi.addition(D.get(i));
 
 
-                temp = gcfi.closedItemsets.size();
+                temp = gcfi.getClosedItemsets().size();
               //  System.out.println((i-startingPoint) + ". Slidingwindowstep done!");
                 //System.out.println("==================================");
             }
@@ -386,103 +382,6 @@ public class Main {
             e.printStackTrace();
         }
     }
-
-    private static void compareStreamGelyWithDanielsOptimization(int support) {
-        try {
-
-            System.out.println("===============================");
-            System.out.println("=====Support is " + support + "=====");
-            System.out.println("===============================");
-
-            String[][] data =  CSVParser.parse(new FileReader("mushrooms.txt"), ' ');
-
-            Set<Integer> E = new HashSet<>();
-            ArrayList<Transaction> D = new ArrayList<>(data.length);
-
-            for (int i = 0; i < data.length; i++) {
-                D.add(new Transaction());
-                //minus 1 wegen space im mushrooms file am Ende jeder Zeile
-                for (int j = 0; j < data[i].length-1; j++) {
-                    int x = Integer.parseInt(data[i][j]);
-                    if (!E.contains(x)) {
-                        E.add(x);
-                    }
-                    D.get(i).add(x);
-
-                }
-            }
-
-            int stepCount = 50;
-            int startingPoint = 0;
-
-            int slidingWindowSize = 5000;
-
-            //int support = 200;
-
-            ArrayList<Transaction> subD;
-
-            int[] solutionsGCFIOptimized  = new int[stepCount];
-            long millisecGCFIOptimized = System.currentTimeMillis();
-
-            subD = getSubD(D, startingPoint, slidingWindowSize+startingPoint);
-
-            GelyCFI/*Optimized*/ gcfiOptimized = new GelyCFI/*Optimized*/(subD, E, support);
-
-            gcfiOptimized.explore();
-            //System.out.println("Explore done!");
-            //System.out.println("==================================");
-            solutionsGCFIOptimized[0] = gcfiOptimized.closedItemsets.size();
-            for (int i = startingPoint+1; i < stepCount + startingPoint; i++) {
-                gcfiOptimized.slidingWindowStep(D.get(slidingWindowSize+i));
-                solutionsGCFIOptimized[i-startingPoint] = gcfiOptimized.closedItemsets.size();
-                //System.out.println((i-startingPoint) + ". Slidingwindowstep done!");
-                //System.out.println("==================================");
-            }
-
-            millisecGCFIOptimized = System.currentTimeMillis() - millisecGCFIOptimized;
-
-
-            System.out.println("GCFI took: " + millisecGCFIOptimized/1000 + "s total time ");
-            System.out.println("GCFI has : " + solutionsGCFIOptimized[stepCount-1] + " closed Itemsets");
-
-            subD = getSubD(D, startingPoint, slidingWindowSize+startingPoint);
-
-            long millisecGCFI = System.currentTimeMillis();
-            /*
-            GelyCFI gcfi = new GelyCFI(subD, E, support);
-
-            gcfi.explore();
-
-            int[] solutionsGCFI = new int[stepCount];
-            //System.out.println("Explore done!");
-            //System.out.println("==================================");
-            solutionsGCFI[0] = gcfi.closedItemsets.size();
-            for (int i = startingPoint+1; i < stepCount + startingPoint; i++) {
-                gcfi.slidingWindowStep(new Itemset(D.get(slidingWindowSize+i)));
-                solutionsGCFI[i-startingPoint] = gcfi.closedItemsets.size();
-                //System.out.println((i-startingPoint) + ". Slidingwindowstep done!");
-                //System.out.println("==================================");
-            }
-
-            millisecGCFI = System.currentTimeMillis() - millisecGCFI;
-
-            System.out.println("GCFI took: " + millisecGCFI/1000 + "s total time ");
-            System.out.println("GCFI has : " + solutionsGCFI[stepCount-1] + " closed Itemsets");
-
-            for (int i = 0; i < stepCount; i++) {
-                //System.out.println((i+1) +". Gely: " + solutionsGely[i] + " || " + solutionsGCFI[i]);
-            }
-*/
-
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
 
     /**
      *
@@ -505,7 +404,7 @@ public class Main {
             System.out.println("=====Support is " + support + "=====");
             System.out.println("===============================");
 
-            String[][] data =  CSVParser.parse(new FileReader("mushrooms.txt"), ' ');
+            String[][] data =  CSVParser.parse(new FileReader("data/mushrooms.txt"), ' ');
 
             Set<Integer> E = new HashSet<>();
             ArrayList<Transaction> D = new ArrayList<>(data.length);
@@ -523,10 +422,10 @@ public class Main {
                 }
             }
 
-            int stepCount = 200;
+            int stepCount = 100;
             int startingPoint = 0;
             
-            int slidingWindowSize = 500;
+            int slidingWindowSize = 1000;
 
             //int support = 200;
 
@@ -565,7 +464,7 @@ public class Main {
 
             long millisecGCFI = System.currentTimeMillis();
 
-            GelyCFI gcfi = new GelyCFI(subD, E, support);
+            StreamGely gcfi = new StreamGely(subD, E, new ClosedFrequentGely(subD, E, support), support);
 
             gcfi.explore();
 
@@ -574,7 +473,7 @@ public class Main {
             //System.out.println("==================================");
             for (int i = startingPoint+1; i <= stepCount + startingPoint; i++) {
                 gcfi.slidingWindowStep(D.get(slidingWindowSize+i));
-                lastSolution = gcfi.closedItemsets.size();
+                lastSolution = gcfi.getClosedItemsets().size();
                // System.out.println((i-startingPoint) + ". Slidingwindowstep done!");
                 //System.out.println("==================================");
             }

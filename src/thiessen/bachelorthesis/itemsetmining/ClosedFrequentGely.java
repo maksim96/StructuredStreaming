@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
- * Created by Maximilian on 03.10.2017.
+ * Created by Maximilian Thiessen on 03.10.2017.
  */
 public class ClosedFrequentGely extends FrequentGely {
 
