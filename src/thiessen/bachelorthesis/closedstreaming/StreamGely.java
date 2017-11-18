@@ -9,7 +9,8 @@ import java.util.*;
  * Created by Maximilian Thiessen on 04.10.2017.
  * Basic implementation of the StreamGely algorithm.
  * Uses any FrequentGely instance.
- */
+ * With ClosedFrequentGely it becomes a usual closed frequent itemset miner on a data stream
+ * */
 public class StreamGely {
 
     protected FrequentGely gely;

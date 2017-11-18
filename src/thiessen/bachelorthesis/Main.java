@@ -18,7 +18,7 @@ public class Main {
         int[] supports = {500, 400, 300, 200, 100, 50, 25, 10};
 
         for (int s: supports) {
-           //slidingWindowTest(s);
+           slidingWindowTest(s);
 
             //testStreamGelyWithoutFrequencyConstraint(s);
         }
@@ -32,7 +32,7 @@ public class Main {
     }
 
     private static void graphGelyRoadNetworkTest() {
-        String[][] data = new String[0][];
+        String[][] data;
         try {
             CSVParser csvParser = new CSVParser(new FileReader("data/roadNet-CA.txt"), '\t');
             csvParser.setCommentStart("#");
@@ -43,13 +43,13 @@ public class Main {
 
             for (String[] line : data) {
                 for (String s : line) {
-                    E.add(Integer.parseInt(s));
+                    E.add(Integer.parseInt(s)-1);
                 }
             }
 
 
 
-            Graph g = new Graph(2000000);
+            Graph g = new Graph(Collections.max(E) + 2);
             for (int i = 0; i < data.length; i++) {
                     g.get(Integer.parseInt(data[i][0])).add(Integer.parseInt(data[i][1]));
             }
@@ -411,8 +411,7 @@ public class Main {
 
             for (int i = 0; i < data.length; i++) {
                 D.add(new Transaction());
-                //minus 1 wegen space im mushrooms file am Ende jeder Zeile
-                for (int j = 0; j < data[i].length-1; j++) {
+                for (int j = 0; j < data[i].length; j++) {
                     int x = Integer.parseInt(data[i][j]);
                     if (!E.contains(x)) {
                         E.add(x);

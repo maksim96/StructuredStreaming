@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="TrafficDataGenerator">
+    <output-path>$PROJECT_DIR$/out/artifacts/TrafficDataGenerator</output-path>
+    <root id="archive" name="TrafficDataGenerator.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/resources/TrafficDataGen/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="StructuredStreaming" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/ostermillerutils-1.08.02-bin/ostermillerutils-1.08.02/ostermillerutils-1.08.02.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
