@@ -12,6 +12,7 @@ import java.util.Set;
 public class Itemset extends HashSet<Integer> {
     //absolute support
     public int support = 0;
+    public int countOfEqualTranscations = 0; //the number of transactions equal to this itemset
 
     /**
      * Constructor

@@ -38,12 +38,16 @@ public class ConnectedGely extends FrequentGely {
         Itemset newItems = new Itemset();
 
         int support = 0;
+        int countTransactionEqual = 0;
         for (int i : parentSupportSet) {
 
             Set transaction = D.get(i);
 
             if (transaction.contains(e)) {
                 support++;
+                if (transaction.size() == itemset.size()) {
+                    countTransactionEqual++;
+                }
                 if (firstTime) {
                     closure =  new Itemset(itemset);
                     newItems = new Itemset(transaction);
@@ -61,6 +65,7 @@ public class ConnectedGely extends FrequentGely {
             return null;
         }
         closure.support = support;
+        closure.countOfEqualTranscations = countTransactionEqual;
         boolean done = false;
 
         closure.add(e);
@@ -90,10 +95,14 @@ public class ConnectedGely extends FrequentGely {
         Itemset newItems = null;
         boolean firstTime = true;
         int support = 0;
+        int countTransactionEqual = 0;
         for (int i = 0; i < D.size(); i++) {
             Set transaction = D.get(i);
             if (transaction.containsAll(itemset)) {
                 support++;
+                if (transaction.size() == itemset.size()) {
+                    countTransactionEqual++;
+                }
                 if (firstTime) {
                     newItems =  new Itemset(transaction);
                     firstTime = false;
@@ -105,7 +114,7 @@ public class ConnectedGely extends FrequentGely {
         }
 
         Itemset closure = new Itemset(itemset, support);
-
+        closure.countOfEqualTranscations = countTransactionEqual;
         if (newItems == null) {
             return closure;
         }

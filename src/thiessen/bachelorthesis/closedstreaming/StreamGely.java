@@ -168,6 +168,9 @@ public class StreamGely {
             for(Itemset itemset : closedItemsets) {
                if (X.containsAll(itemset)) {
                    itemset.support++;
+                   if (itemset.size() == X.size()) {
+                       itemset.countOfEqualTranscations++;
+                   }
                }
            }
         } else { //update over gely subcall
@@ -182,6 +185,9 @@ public class StreamGely {
                 } else {
                     int index = this.closedItemsets.indexOf(newClosed); //get closed itemsets which equals newClosed
                     closedItemsets.get(index).support++; //update its support
+                    if (newClosed.size() == X.size()) {
+                        closedItemsets.get(index).countOfEqualTranscations++;
+                    }
                 }
             }
         }
@@ -214,32 +220,28 @@ public class StreamGely {
             for (Itemset Y : closedItemsets) {
                 if (X.containsAll(Y)) {
                     Y.support--;
+                    if (Y.size() == X.size()) {
+                        Y.countOfEqualTranscations--;
+                    }
                     if (Y.support < minSupport) { //if support falls under minSupport, delete it
                         notMoreClosed.add(Y);
                     }
                 }
             }
         } else {
-            ArrayList<Itemset> stillClosed = new ArrayList<>();
 
             for (Itemset Y: closedItemsets) {
                 setUpGely(D, E, minSupport);
                 if (!X.containsAll(Y)) { //only iterate over subsets of X
                     continue;
                 }
-                if (transactionExistsInDatabase(Y)) {
+                if (Y.countOfEqualTranscations > 0 || Y.equals(gely.closure(Y, new HashSet<>()))) {
                     Y.support--;
-                    if (Y.support < minSupport) {
-                        notMoreClosed.add(Y);
+                    if (Y.size() == X.size()) {
+                        Y.countOfEqualTranscations--;
                     }
-                /*} else if (closureCheckDeletion(stillClosed, Y)) {*/
-                } else if (Y.equals(gely.closure(Y, new HashSet<>()))) {
-
-                    Y.support--;
                     if (Y.support < minSupport) {
                         notMoreClosed.add(Y);
-                    } else {
-                        stillClosed.add(Y);
                     }
                 } else {
                     notMoreClosed.add(Y);

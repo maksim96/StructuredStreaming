@@ -50,6 +50,9 @@ public abstract class FrequentGely extends Gely {
             for (Set transaction : D) {
                 if (transaction.containsAll(itemset)) {
                     supportCount++;
+                    if (transaction.size() == itemset.size()) {
+                        itemset.countOfEqualTranscations++;
+                    }
                 }
             }
             itemset.support = supportCount;

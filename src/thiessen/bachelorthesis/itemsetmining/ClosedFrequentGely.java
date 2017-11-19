@@ -53,6 +53,9 @@ public class ClosedFrequentGely extends FrequentGely {
                     newItems.retainAll(transaction);
                 }
                 closure.support++;
+                if (transaction.size() == itemset.size()) {
+                    closure.countOfEqualTranscations++;
+                }
             }
 
          }
@@ -81,6 +84,9 @@ public class ClosedFrequentGely extends FrequentGely {
                     closure.retainAll(transaction);
                 }
                 closure.support++;
+                if (transaction.size() == itemset.size()) {
+                    itemset.countOfEqualTranscations++;
+                }
             }
 
         }
