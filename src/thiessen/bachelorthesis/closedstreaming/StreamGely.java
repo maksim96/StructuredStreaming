@@ -15,7 +15,7 @@ public class StreamGely {
 
     protected FrequentGely gely;
 
-    protected ArrayList<Itemset> closedItemsets = new ArrayList<>();
+    protected HashMap<Itemset, Itemset> closedItemsets = new HashMap<>();
 
     //StreamGely has its own set of parameters minSupport E, D, since it uses Gely with different options
     protected int minSupport = 1;
@@ -158,14 +158,14 @@ public class StreamGely {
         //condition for fast update
         if (hasNoneZeroSupport(X) && itemsetX.equals(gely.closure(itemsetX, new HashSet<>())) && gely.isFrequent(itemsetX, true)) {
             // setUpGely(D, E, minSupport);
-            if (!closedItemsets.contains(X)) {
+            if (!closedItemsets.containsKey(X)) {
                 //X support was calculated during isFrequent(..,true)
-                closedItemsets.add(itemsetX);
+                closedItemsets.put(itemsetX, itemsetX);
             }
 
             D.add(X);
             //update support of all closed Itemsets which are subsets of X
-            for(Itemset itemset : closedItemsets) {
+            for(Itemset itemset : closedItemsets.values()) {
                if (X.containsAll(itemset)) {
                    itemset.support++;
                    if (itemset.size() == X.size()) {
@@ -178,15 +178,15 @@ public class StreamGely {
            // gely = new ClosedFrequentGely(D, new HashSet<>(X), minSupport); //E is restricted to items in X
             setUpGely(D, getFrequentItems(new HashSet<>(X)), minSupport); //gely subcall but search only in F_X
 
-            ArrayList<Itemset> newCloseds = gely.gely(true);
-            for (Itemset newClosed : newCloseds) {
-                if (!closedItemsets.contains(newClosed)) {
-                    closedItemsets.add(newClosed);
+            HashMap<Itemset, Itemset> newCloseds = gely.gely(true);
+            for (Itemset newClosed : newCloseds.values()) {
+                if (!closedItemsets.containsKey(newClosed)) {
+                    closedItemsets.put(newClosed, newClosed);
                 } else {
-                    int index = this.closedItemsets.indexOf(newClosed); //get closed itemsets which equals newClosed
-                    closedItemsets.get(index).support++; //update its support
+                    //int index = this.closedItemsets.indexOf(newClosed); //get closed itemsets which equals newClosed
+                    closedItemsets.get(newClosed).support++; //update its support
                     if (newClosed.size() == X.size()) {
-                        closedItemsets.get(index).countOfEqualTranscations++;
+                        closedItemsets.get(newClosed).countOfEqualTranscations++;
                     }
                 }
             }
@@ -217,7 +217,7 @@ public class StreamGely {
         //setUpGely();
         ArrayList<Itemset> notMoreClosed = new ArrayList<>();
         if (this.transactionExistsInDatabase(X)) { //fast update
-            for (Itemset Y : closedItemsets) {
+            for (Itemset Y : closedItemsets.values()) {
                 if (X.containsAll(Y)) {
                     Y.support--;
                     if (Y.size() == X.size()) {
@@ -230,7 +230,7 @@ public class StreamGely {
             }
         } else {
 
-            for (Itemset Y: closedItemsets) {
+            for (Itemset Y: closedItemsets.values()) {
                 setUpGely(D, E, minSupport);
                 if (!X.containsAll(Y)) { //only iterate over subsets of X
                     continue;
@@ -291,12 +291,8 @@ public class StreamGely {
         this.minSupport = minSupport;
     }
 
-    public ArrayList<Itemset> getClosedItemsets() {
+    public HashMap<Itemset, Itemset> getClosedItemsets() {
         return closedItemsets;
-    }
-
-    public void setClosedItemsets(ArrayList<Itemset> closedItemsets) {
-        this.closedItemsets = closedItemsets;
     }
 
     public FrequentGely getGely() {

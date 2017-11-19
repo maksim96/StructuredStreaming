@@ -124,8 +124,8 @@ public abstract class FrequentGely extends Gely {
 
     //first prune E, than do usual gely
     @Override
-    public ArrayList<Itemset> gely() {
-        closedItemsets = new ArrayList<>(D.size()); //init with no. transactions
+    public HashMap<Itemset, Itemset> gely() {
+        closedItemsets = new HashMap<>(D.size()); //init with no. transactions
 
         Set<Integer> prunedE = new HashSet<>(E);
 
@@ -139,11 +139,11 @@ public abstract class FrequentGely extends Gely {
     }
 
     //no pruning of E. usefull in the sliding window case, where you do not have to calculate the prune E all over again
-    public ArrayList<Itemset> gely(boolean notPrune) {
+    public HashMap<Itemset, Itemset> gely(boolean notPrune) {
         if (!notPrune) {
             return gely();
         }
-        closedItemsets = new ArrayList<>(D.size()); //init with no. transactions
+        closedItemsets = new HashMap<>(D.size()); //init with no. transactions
 
         list(new Itemset(), new HashSet<>(), null);
         // System.out.println("Final count!: " + closedItemsets.size());
@@ -191,7 +191,7 @@ public abstract class FrequentGely extends Gely {
                 intersection.retainAll(B);
                 if (intersection.isEmpty()) {
                    // System.out.println((closedItemsets.size() + 1) + ". " + newC);
-                    closedItemsets.add(newC);
+                    closedItemsets.put(newC, newC);
                     list(newC, B, currentSupportSet);
                 }
             }

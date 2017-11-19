@@ -1,6 +1,7 @@
 package thiessen.bachelorthesis.itemsetmining;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ public abstract class Gely {
     protected Set<Integer> E;
     protected ArrayList<Transaction> D;
 
-    protected ArrayList<Itemset> closedItemsets;
+    protected HashMap<Itemset, Itemset> closedItemsets;
 
     private final static int NOT_FOUND_AUGMENTATION = -1;
 
@@ -66,8 +67,8 @@ public abstract class Gely {
      * Starts the gely algorithm. Finds and returns all closed itemsets in (E, F) regarding to D.
      * @return
      */
-    public ArrayList<Itemset> gely() {
-        closedItemsets = new ArrayList<>(D.size()); //init with no. transactions
+    public HashMap<Itemset, Itemset> gely() {
+        closedItemsets = new HashMap<>(D.size()); //init with no. transactions
 
         list(new Itemset(), new HashSet<>(), null);
        // System.out.println("Final count!: " + closedItemsets.size());
@@ -119,7 +120,7 @@ public abstract class Gely {
                 intersection.retainAll(B);
                 //if not seen this closure before
                 if (intersection.isEmpty()) {
-                    closedItemsets.add(newC);
+                    closedItemsets.put(newC, newC);
                     list(newC, B, currentSupportSet);
                 }
             }
@@ -150,12 +151,8 @@ public abstract class Gely {
         D = d;
     }
 
-    public ArrayList<Itemset> getClosedItemsets() {
+    public HashMap<Itemset, Itemset> getClosedItemsets() {
         return closedItemsets;
-    }
-
-    public void setClosedItemsets(ArrayList<Itemset> closedItemsets) {
-        this.closedItemsets = closedItemsets;
     }
 
 }

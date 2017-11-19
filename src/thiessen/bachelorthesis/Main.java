@@ -439,7 +439,7 @@ public class Main {
                 subD = getSubD(D, i, slidingWindowSize+i);
                 ClosedFrequentGely closedItemsetMiner = new ClosedFrequentGely(subD, E, support);
 
-                ArrayList<Itemset> closedItemsets = closedItemsetMiner.gely();
+                HashMap<Itemset, Itemset> closedItemsets = closedItemsetMiner.gely();
 
                 lastSolution = closedItemsets.size();
 

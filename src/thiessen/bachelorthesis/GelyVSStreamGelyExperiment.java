@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -76,7 +77,7 @@ public class GelyVSStreamGelyExperiment {
                 subD = getSubD(D, i, slidingWindowSize + i);
                 ClosedFrequentGely closedItemsetMiner = new ClosedFrequentGely(subD, E, support);
 
-                ArrayList<Itemset> closedItemsets = closedItemsetMiner.gely();
+                HashMap<Itemset, Itemset> closedItemsets = closedItemsetMiner.gely();
 
                 lastSolution = closedItemsets.size();
 
