@@ -18,14 +18,12 @@ public class Main {
         int[] supports = {500, 400, 300, 200, 100, 50, 25, 10};
 
         for (int s: supports) {
-           slidingWindowTest(s);
+      //     slidingWindowTest(s);
 
             //testStreamGelyWithoutFrequencyConstraint(s);
         }
         //    graphGelyTest();
-     graphGelyRoadNetworkTest();
-
-      //graphGelSmallTest();
+     //graphGelyRoadNetworkTest();
 
        // VertexToNELFormat.format("data/trafficjams.txt", "data/trafficjamsConverted.txt", "x" );
 
@@ -259,6 +257,7 @@ public class Main {
             e.printStackTrace();
         }
     }
+
 
     private static void graphGelyTest() {
         String[][] data = new String[0][];

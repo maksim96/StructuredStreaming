@@ -99,26 +99,26 @@ public class GelyVSStreamGelyExperiment {
 
             subD = getSubD(D, 0, slidingWindowSize);
 
-            long millisecGCFI = System.currentTimeMillis();
+            long millisecStream = System.currentTimeMillis();
 
-            StreamGely gcfi = new StreamGely(subD, E, new ClosedFrequentGely(subD, E, support), support);
+            StreamGely stream = new StreamGely(subD, E, new ClosedFrequentGely(subD, E, support), support);
 
-            gcfi.explore();
+            stream.explore();
 
             lastSolution = -1;
             //System.out.println("Explore done!");
             //System.out.println("==================================");
             for (int i = 1; i <= updateSteps; i++) {
-                gcfi.slidingWindowStep(D.get(slidingWindowSize + i));
-                lastSolution = gcfi.getClosedItemsets().size();
+                stream.slidingWindowStep(D.get(slidingWindowSize + i));
+                lastSolution = stream.getClosedItemsets().size();
                 // System.out.println((i-startingPoint) + ". Slidingwindowstep done!");
                 //System.out.println("==================================");
             }
 
-            millisecGCFI = System.currentTimeMillis() - millisecGCFI;
+            millisecStream = System.currentTimeMillis() - millisecStream;
 
-            System.out.println("GCFI took: " + millisecGCFI / 1000 + "s total time ");
-            System.out.println("GCFI has : " + lastSolution + " closed Itemsets");
+            System.out.println("StreamGely took: " + millisecStream / 1000 + "s total time ");
+            System.out.println("StreamGely has : " + lastSolution + " closed Itemsets");
 
             for (int i = 0; i < updateSteps; i++) {
                 //System.out.println((i+1) +". Gely: " + solutionsGely[i] + " || " + solutionsGCFI[i]);
